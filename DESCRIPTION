@@ -1,0 +1,11 @@
+Package: ESM262FinalAssignment
+Type: Package
+Title: Land Footprint of Wind Turbines
+Version: 0.1.0
+Author: Ariel Daniels & Sridhar Iyengar
+Maintainer: <atdaniels@ucsb.edu>
+Description: This function calculates the land footprint of a wind turbine based on turbine configuration,
+rotor diameter, and rated capacity of the turbine.
+License: MIT License
+Encoding: UTF-8
+LazyData: true
