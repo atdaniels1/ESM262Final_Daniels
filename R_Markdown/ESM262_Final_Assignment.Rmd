@@ -1,0 +1,72 @@
+---
+title: "ESM262 Final Assignment"
+author: "Ariel Daniels"
+date: "2024-03-22"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(purrr)
+library(ggpubr)
+library(testthat)
+```
+
+# source data from .R file
+```{r}
+source("C:/Users/ariel/Documents/ESM 262/ESM262_Assignment1/ESM262_Final/ESM262FinalAssignment/R/Land_Footprint_Final.R")
+```
+
+#Creating a function 
+```{r}
+rd = c(90, 150)
+pwr = c(2, 4, 6, 8)
+
+wind_conf = data.frame(id = c("A","B","C","D"), rd = c(90, 150, 90, 150), pwr = c(2, 4, 6, 8))
+
+colnames(wind_conf) = c("Turbine_id", "Rotor_Diameter", "Rated_Capacity")
+
+wind_conf
+```
+
+# use for loop to calculate land footprint
+```{r}
+landf1 = as.data.frame(matrix(nrow = 1, ncol = nrow(wind_conf)))
+
+colnames(landf1) = wind_conf$Turbine_id
+
+landf1
+
+for (i in 1:nrow(wind_conf)) {
+  landf1[,i] = land_footprint(rd=wind_conf$Rotor_Diameter[i], pwr = wind_conf$Rated_Capacity[i])
+}
+
+landf1
+```
+
+# use pmap to calculate land footprint
+```{r}
+landf2 = pmap(list(rd = wind_conf$Rotor_Diameter, pwr = wind_conf$Rated_Capacity), land_footprint)
+
+landf2
+
+landf2 = as.data.frame(landf2, col.names= wind_conf$Turbine_id)
+
+
+landf2
+
+landf2l = landf2 %>% pivot_longer(cols = everything(), names_to = "Turbine_id", values_to = "Land_Footprint")
+
+landf2l
+
+landf_plot = ggplot(landf2l, aes(x=Turbine_id, y=Land_Footprint, fill=Turbine_id))+geom_col()+labs(x="Turbine ID", y="Land Footprint (m2/GWh)", fill ="Turbine ID")+ggtitle("Land Footprint by Turbine ID")
+
+
+landf_plot
+
+
+sprintf("The turbine with the largest land footprint is turbine%s",landf2l$Turbine_id[2])
+
+
+```
